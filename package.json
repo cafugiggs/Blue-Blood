@@ -14,9 +14,13 @@
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/cafugiggs/vue-powerful-table.git"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
