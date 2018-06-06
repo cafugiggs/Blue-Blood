@@ -5,11 +5,6 @@
     </div>
   </div>
 </template>
-<script>
-  export default {
-
-  };
-</script>
 <style scoped>
   .ball-clip-rotate > div {
     background-color: #2d8cf0;
@@ -26,8 +21,8 @@
     background: transparent !important;
     display: inline-block;
     -webkit-animation: rotate 0.75s 0s linear infinite;
-    animation: rotate 0.75s 0s linear infinite; }
-
+    animation: rotate 0.75s 0s linear infinite;
+  }
   @keyframes rotate {
     0% {
       -webkit-transform: rotate(0deg) scale(1);

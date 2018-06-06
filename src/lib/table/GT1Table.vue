@@ -76,225 +76,223 @@
   </div>
 </template>
 <script>
-  import Gt1Header from './GT1Header.vue'
-  import Gt1Cell from './GT1Cell.vue'
-  import Gt1CountCell from './GT1CountCell.vue'
+import Gt1Header from './GT1Header.vue'
+import Gt1Cell from './GT1Cell.vue'
+import Gt1CountCell from './GT1CountCell.vue'
 
-  export default {
-    components: {Gt1Header, Gt1Cell, Gt1CountCell},
-    props: {
-      columns: {
-        type: Array,
-        require: true
-      },
-      data: {
-        type: Array,
-        require: true
-      },
-      styles: {
-        type: Object,
-        require: true
-      },
-      isPolling: {
-        type: Boolean,
-        require: true
-      },
-      isSingleSelection: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      },
-      isCanEdit: {
-        type: Boolean,
-      },
-      hasIndex: {
-        type: Boolean
+export default {
+  components: {Gt1Header, Gt1Cell, Gt1CountCell},
+  props: {
+    columns: {
+      type: Array,
+      require: true
+    },
+    data: {
+      type: Array,
+      require: true
+    },
+    styles: {
+      type: Object,
+      require: true
+    },
+    isPolling: {
+      type: Boolean,
+      require: true
+    },
+    isSingleSelection: {
+      type: Boolean,
+      default () {
+        return false
       }
     },
-    data() {
-      return {
-        fixed: {columns: []},
-        noFixed: {columns: []},
-        currentScrollPosition: {
-          left: 0,
-          top: 0
-        },
-        isScrolling: false,
-      }
+    isCanEdit: {
+      type: Boolean
     },
-    computed: {
-      cellCount() {
-        return this.columns.length;
+    hasIndex: {
+      type: Boolean
+    }
+  },
+  data () {
+    return {
+      fixed: {columns: []},
+      noFixed: {columns: []},
+      currentScrollPosition: {
+        left: 0,
+        top: 0
       },
-      defaultCellWidth() {
-        return (this.fixedWidth + this.noFixedWidth) / this.cellCount;
-      },
-      // 固定列的宽度
-      fixedWidth() {
-        let width = 0;
-        if (this.fixed.columns.length > 0) {
-          this.fixed.columns.forEach(column => {
-            width += column.width;
-          })
-        }
-        return width;
-      },
-      // 固定列容器样式
-      fixedContent() {
-        let style = {};
-        style.width = `${this.fixedWidth}px`;
-        return style;
-      },
-      // 固定列内容行容器(外层容器 - 表头)
-      fixedCellContent() {
-        let style = {};
-        const CONTENT_HEIGHT = this.data.length * 40;
-        const BLOCK_HEIGHT = parseInt(this.styles.height.replace(/px|%/g, '') - 40);
-        style.height = CONTENT_HEIGHT > BLOCK_HEIGHT ? `${BLOCK_HEIGHT - 5}px` : `${BLOCK_HEIGHT}px`;
-        style.overflowY = 'auto';
-        return style;
-      },
-
-      // 非固定列宽度
-      noFixedWidth() {
-        let width = 0;
-        this.noFixed.columns.forEach(column => {
-          width += column.width;
-        });
-        return width;
-      },
-      // 非固定列容器样式(外层容器 - 固定列)
-      noFixedContent() {
-        let style = {};
-        style.width = `${parseInt(this.styles.width.replace(/px|%/g, '')) - this.fixedWidth}px`;
-        return style;
-      },
-      // 非固定列表头容器高度
-      noFixedHeadContent() {
-        let style = {};
-        const CONTENT_WIDTH = this.noFixedWidth;
-        const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth);
-        style.width = CONTENT_WIDTH > BLOCK_WIDTH ? `${BLOCK_WIDTH - 5}px` : `${BLOCK_WIDTH}px`;
-        style.height = '40px';
-        style.overflow = 'auto';
-        return style;
-      },
-      // 非固定列内容容器高度
-      noFixedScrollContent() {
-        let style = {};
-        const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth);
-        const BLOCK_HEIGHT = parseInt(this.styles.height.replace(/px|%/g, '') - 40);
-
-        style.width = `${BLOCK_WIDTH}px`;
-        style.height = `${BLOCK_HEIGHT}px`;
-        style.overflow = 'auto';
-        return style;
-      },
-      // 非固定列内容行样式
-      noFixedCellContent() {
-        let style = {};
-        style.width = `${this.noFixedWidth}px`;
-        style.height = `${this.data.length * 40}px`;
-        return style;
-      },
-      // 非固定列宽度样式
-      noFixedWidthStyles() {
-        let style = {};
-        style.width = `${this.noFixedWidth}px`;
-        return style;
-      },
-      // 统计行
-      noFixedCountScrollContent() {
-        let style = {};
-        const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth);
-        const BLOCK_HEIGHT = 40;
-
-        style.width = `${BLOCK_WIDTH}px`;
-        style.height = `${BLOCK_HEIGHT}px`;
-        style.overflow = 'auto';
-        return style;
-      },
-      noFixedCountCellContent() {
-        let style = {};
-        const CONTENT_WIDTH = this.noFixedWidth;
-        const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth);
-        style.width = CONTENT_WIDTH > BLOCK_WIDTH ? `${BLOCK_WIDTH - 5}px` : `${BLOCK_WIDTH}px`;
-        style.height = '40px';
-        style.overflow = 'auto';
-        return style;
-      }
+      isScrolling: false
+    }
+  },
+  computed: {
+    cellCount () {
+      return this.columns.length
     },
-    created() {
-      this.initData();
+    defaultCellWidth () {
+      return (this.fixedWidth + this.noFixedWidth) / this.cellCount
     },
-    methods: {
-      initData() {
-        this.separateFixedAndNoFixed();
-      },
-      separateFixedAndNoFixed() {
-        const _self = this;
-        this.columns.forEach((cell, index , array) => {
-          if (cell.fixed) {
-            _self.fixed.columns.push(_self.columns[index]);
-          } else {
-            _self.noFixed.columns.push(_self.columns[index]);
-          }
-        });
-      },
-      handleNoFixedScroll(e) {
-        if (this.isPolling) {
-          return;
-        }
-        const AFTER_SCROLL_TOP = e.target.scrollTop;
-        const AFTER_SCROLL_LEFT = e.target.scrollLeft;
-
-        this.$nextTick(() => {
-          document.getElementById('fixedCellContent').scrollTop = AFTER_SCROLL_TOP;
-          document.getElementById('noFixedHeadContent').scrollLeft = AFTER_SCROLL_LEFT;
-          document.getElementById('noFixedCountCellContent').scrollLeft = AFTER_SCROLL_LEFT;
-        });
-
-        if (AFTER_SCROLL_TOP >= (e.target.scrollHeight - e.target.clientHeight)) {
-          this.getPageData();
-        }
-      },
-      getPageData() {
-        this.$emit('on-getPageData');
-      },
-      selectAll() {
-        this.data.forEach(data => {
-          data.checked = true;
-        });
-        this.$emit('on-select-all', this.data);
-      },
-      cancelAll() {
-        this.data.forEach(data => {
-          data.checked = false;
-        });
-        this.$emit('on-cancel-all');
-      },
-      singleSelect(e) {
-        if (this.isSingleSelection) {
-          if (e.value) {
-            this.data.forEach((data, index, arr) => {
-              data.checked = false;
-              if (index === e.index) {
-                data.checked = true;
-              }
-            });
-          }
-        }
-        this.$emit('on-select', {
-          value: e.value,
-          index: e.index,
-          selection: this.data.filter(row => {
-            return row.checked;
-          })
+    // 固定列的宽度
+    fixedWidth () {
+      let width = 0
+      if (this.fixed.columns.length > 0) {
+        this.fixed.columns.forEach(column => {
+          width += column.width
         })
       }
+      return width
+    },
+    // 固定列容器样式
+    fixedContent () {
+      let style = {}
+      style.width = `${this.fixedWidth}px`
+      return style
+    },
+    // 固定列内容行容器(外层容器 - 表头)
+    fixedCellContent () {
+      let style = {}
+      const CONTENT_HEIGHT = this.data.length * 40
+      const BLOCK_HEIGHT = parseInt(this.styles.height.replace(/px|%/g, '') - 40)
+      style.height = CONTENT_HEIGHT > BLOCK_HEIGHT ? `${BLOCK_HEIGHT - 5}px` : `${BLOCK_HEIGHT}px`
+      style.overflowY = 'auto'
+      return style
+    },
+    // 非固定列宽度
+    noFixedWidth () {
+      let width = 0
+      this.noFixed.columns.forEach(column => {
+        width += column.width
+      })
+      return width
+    },
+    // 非固定列容器样式(外层容器 - 固定列)
+    noFixedContent () {
+      let style = {}
+      style.width = `${parseInt(this.styles.width.replace(/px|%/g, '')) - this.fixedWidth}px`
+      return style
+    },
+    // 非固定列表头容器高度
+    noFixedHeadContent () {
+      let style = {}
+      const CONTENT_WIDTH = this.noFixedWidth
+      const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth)
+      style.width = CONTENT_WIDTH > BLOCK_WIDTH ? `${BLOCK_WIDTH - 5}px` : `${BLOCK_WIDTH}px`
+      style.height = '40px'
+      style.overflow = 'auto'
+      return style
+    },
+    // 非固定列内容容器高度
+    noFixedScrollContent () {
+      let style = {}
+      const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth)
+      const BLOCK_HEIGHT = parseInt(this.styles.height.replace(/px|%/g, '') - 40)
+
+      style.width = `${BLOCK_WIDTH}px`
+      style.height = `${BLOCK_HEIGHT}px`
+      style.overflow = 'auto'
+      return style
+    },
+    // 非固定列内容行样式
+    noFixedCellContent () {
+      let style = {}
+      style.width = `${this.noFixedWidth}px`
+      style.height = `${this.data.length * 40}px`
+      return style
+    },
+    // 非固定列宽度样式
+    noFixedWidthStyles () {
+      let style = {}
+      style.width = `${this.noFixedWidth}px`
+      return style
+    },
+    // 统计行
+    noFixedCountScrollContent () {
+      let style = {}
+      const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth)
+      const BLOCK_HEIGHT = 40
+      style.width = `${BLOCK_WIDTH}px`
+      style.height = `${BLOCK_HEIGHT}px`
+      style.overflow = 'auto'
+      return style
+    },
+    noFixedCountCellContent () {
+      let style = {}
+      const CONTENT_WIDTH = this.noFixedWidth
+      const BLOCK_WIDTH = parseInt(this.styles.width.replace(/px|%/g, '') - this.fixedWidth)
+      style.width = CONTENT_WIDTH > BLOCK_WIDTH ? `${BLOCK_WIDTH - 5}px` : `${BLOCK_WIDTH}px`
+      style.height = '40px'
+      style.overflow = 'auto'
+      return style
+    }
+  },
+  created () {
+    this.initData()
+  },
+  methods: {
+    initData () {
+      this.separateFixedAndNoFixed()
+    },
+    separateFixedAndNoFixed () {
+      const _self = this
+      this.columns.forEach((cell, index, array) => {
+        if (cell.fixed) {
+          _self.fixed.columns.push(_self.columns[index])
+        } else {
+          _self.noFixed.columns.push(_self.columns[index])
+        }
+      })
+    },
+    handleNoFixedScroll (e) {
+      if (this.isPolling) {
+        return
+      }
+      const AFTER_SCROLL_TOP = e.target.scrollTop
+      const AFTER_SCROLL_LEFT = e.target.scrollLeft
+
+      this.$nextTick(() => {
+        document.getElementById('fixedCellContent').scrollTop = AFTER_SCROLL_TOP
+        document.getElementById('noFixedHeadContent').scrollLeft = AFTER_SCROLL_LEFT
+        document.getElementById('noFixedCountCellContent').scrollLeft = AFTER_SCROLL_LEFT
+      })
+
+      if (AFTER_SCROLL_TOP >= (e.target.scrollHeight - e.target.clientHeight)) {
+        this.getPageData()
+      }
+    },
+    getPageData () {
+      this.$emit('on-getPageData')
+    },
+    selectAll () {
+      this.data.forEach(data => {
+        data.checked = true
+      })
+      this.$emit('on-select-all', this.data)
+    },
+    cancelAll () {
+      this.data.forEach(data => {
+        data.checked = false
+      })
+      this.$emit('on-cancel-all')
+    },
+    singleSelect (e) {
+      if (this.isSingleSelection) {
+        if (e.value) {
+          this.data.forEach((data, index, arr) => {
+            data.checked = false
+            if (index === e.index) {
+              data.checked = true
+            }
+          })
+        }
+      }
+      this.$emit('on-select', {
+        value: e.value,
+        index: e.index,
+        selection: this.data.filter(row => {
+          return row.checked
+        })
+      })
     }
   }
+}
 </script>
 <style scoped>
   .content {

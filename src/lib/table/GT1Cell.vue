@@ -6,76 +6,69 @@
       </div>
       <div v-else>
         <a href="javascript:;" v-if="!isEditing || (currentEditingKey !== column.key)" @dblclick="editHandle(column.key)">{{bodyData[column.key] !== "" ? bodyData[column.key] : ""}}</a>
-        <input type="text" :value="`${bodyData[column.key]}`" v-else @blur="cancelHandle"></input>
+        <input type="text" :value="`${bodyData[column.key]}`" v-else @blur="cancelHandle" />
       </div>
     </li>
   </ul>
 </template>
 <script>
-  const GT1_HEAD_HEIGHT = 40;
-
-  export default {
-    props: {
-      headColumns: {
-        type: Array,
-        require: true
-      },
-      bodyStyles: {
-        type: Object
-      },
-      bodyData: {
-        type: Object,
-        require: true
-      },
-      dataIndex: {
-        type: Number,
-        require: true
-      },
-      defaultCellWidth: {
-        type: Number
-      },
-      isCanEdit: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      }
+const GT1_HEAD_HEIGHT = 40
+export default {
+  props: {
+    headColumns: {
+      type: Array,
+      require: true
     },
-    data() {
-      return {
-        currentEditingKey: '',
-        isEditing: false
-      }
+    bodyStyles: {
+      type: Object
     },
-    computed: {
-
+    bodyData: {
+      type: Object,
+      require: true
     },
-    mounted() {
-
+    dataIndex: {
+      type: Number,
+      require: true
     },
-    methods: {
-      computeCellStyle(column) {
-        let style = {};
-        style.width = column.width ? `${column.width}px` : `${parseFloat(this.defaultCellWidth)}px`;
-        style.height = `${GT1_HEAD_HEIGHT}px`;
-        return style;
-      },
-      changeHandle(e) {
-        this.$emit('on-select', {value: e, index: this.dataIndex});
-      },
-      editHandle(key) {
-        if (!this.isCanEdit) {
-          return;
-        }
-        this.currentEditingKey = key;
-        this.isEditing = true;
-      },
-      cancelHandle(e) {
-        this.isEditing = !this.isEditing;
-        this.$set(this.bodyData, this.currentEditingKey, e.target.value);
+    defaultCellWidth: {
+      type: Number
+    },
+    isCanEdit: {
+      type: Boolean,
+      default () {
+        return false
       }
     }
+  },
+  data () {
+    return {
+      currentEditingKey: '',
+      isEditing: false
+    }
+  },
+  methods: {
+    computeCellStyle (column) {
+      let style = {}
+      style.width = column.width ? `${column.width}px` : `${parseFloat(this.defaultCellWidth)}px`
+      style.height = `${GT1_HEAD_HEIGHT}px`
+      return style
+    },
+    changeHandle (e) {
+      this.$emit('on-select', {value: e, index: this.dataIndex})
+    },
+    editHandle (key) {
+      if (!this.isCanEdit) {
+        return
+      }
+      this.currentEditingKey = key
+      this.isEditing = true
+    },
+    cancelHandle (e) {
+      this.isEditing = !this.isEditing
+      this.$set(this.bodyData, this.currentEditingKey, e.target.value)
+    }
   }
+}
 </script>
 <style scoped>
   ul.content {

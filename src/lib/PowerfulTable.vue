@@ -26,118 +26,113 @@
   </div>
 </template>
 <script>
-  const GT1_TABLE_DEFAULT_TOP = -40; // 表格默认位置: -40是为了隐藏"下拉刷新"
-  const GT1_TABLE_SHOW_PULL = -80; // 表格显示"上拉加载"的位置
+import Gt1DropDown from './table/GT1DropDown.vue'
+import Gt1PullUp from './table/GT1PullUp.vue'
+import Gt1Table from './table/GT1Table.vue'
 
-  import Gt1DropDown from '../common/table/GT1DropDown.vue'
-  import Gt1PullUp from '../common/table/GT1PullUp.vue'
-  import Gt1Table from '../common/table/GT1Table.vue'
-
-  export default {
-    components: {Gt1DropDown, Gt1PullUp, Gt1Table},
-    props: {
-      isDropDown: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      },
-      isPollUp: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      },
-      isSingleSelection: {
-        type: Boolean
-      },
-      isCanEdit: {
-        type: Boolean
-      },
-      hasIndex: {
-        type: Boolean
-      },
-      width: {
-        type: Number
-      },
-      height: {
-        type: Number
-      },
-      columns: {
-        type: Array,
-        require: true
-      },
-      data: {
-        type: Array,
-        require: true
-      },
-    },
-    data() {
-      return {
-        isNeedShowTable: false
+export default {
+  components: {Gt1DropDown, Gt1PullUp, Gt1Table},
+  props: {
+    isDropDown: {
+      type: Boolean,
+      default () {
+        return false
       }
     },
-    computed: {
-      styles () {
-        let style = {};
-        style.height = `${parseInt(this.height)}px`;
-        style.width = `${parseInt(this.width)}px`;
-        style.overflow = 'visible';
-        style.boxSizing = 'border-box';
-        return style;
-      },
-      salaryData () {
-        if (this.hasIndex) {
-          this.data.forEach((d, i, a) => {
-            d['index'] = i + 1;
-          });
-        }
-        return this.data;
+    isPollUp: {
+      type: Boolean,
+      default () {
+        return false
       }
     },
-    mounted() {
-      if (!this.hasIndex) {
-        this.isNeedShowTable = true;
-      } else {
-        this.setIndex();
-      }
+    isSingleSelection: {
+      type: Boolean
     },
-    methods: {
-      getPageData() {
-        this.$emit('on-getPageData');
-      },
-      selectAll(selection) {
-        this.$emit('on-select-all', selection)
-      },
-      cancelAll() {
-        this.$emit('on-cancel-all');
-      },
-      singleSelect(selection) {
-        this.$emit('on-select', selection);
-      },
-      setIndex() {
-        const isHasIndex = this.columns[0].key === 'index';
-        if (isHasIndex) {
-          return;
-        }
-
-        let hasFixedColumn = false;
-        for (let i = 0; i < this.columns.length; i++) {
-          if (this.columns[i].fixed) {
-            hasFixedColumn = true;
-            break;
-          }
-        }
-
-        if (hasFixedColumn) {
-          this.columns.unshift({title: '', key: 'index', width: 40, align: 'center', fixed: true});
-        } else {
-          this.columns.unshift({title: '', key: 'index', width: 40, align: 'center'});
-        }
-        this.isNeedShowTable = true;
-      }
+    isCanEdit: {
+      type: Boolean
+    },
+    hasIndex: {
+      type: Boolean
+    },
+    width: {
+      type: Number
+    },
+    height: {
+      type: Number
+    },
+    columns: {
+      type: Array,
+      require: true
+    },
+    data: {
+      type: Array,
+      require: true
     }
-  };
+  },
+  data () {
+    return {
+      isNeedShowTable: false
+    }
+  },
+  computed: {
+    styles () {
+      let style = {}
+      style.height = `${parseInt(this.height)}px`
+      style.width = `${parseInt(this.width)}px`
+      style.overflow = 'visible'
+      style.boxSizing = 'border-box'
+      return style
+    },
+    salaryData () {
+      if (this.hasIndex) {
+        this.data.forEach((d, i, a) => {
+          d['index'] = i + 1
+        })
+      }
+      return this.data
+    }
+  },
+  mounted () {
+    if (!this.hasIndex) {
+      this.isNeedShowTable = true
+    } else {
+      this.setIndex()
+    }
+  },
+  methods: {
+    getPageData () {
+      this.$emit('on-getPageData')
+    },
+    selectAll (selection) {
+      this.$emit('on-select-all', selection)
+    },
+    cancelAll () {
+      this.$emit('on-cancel-all')
+    },
+    singleSelect (selection) {
+      this.$emit('on-select', selection)
+    },
+    setIndex () {
+      const isHasIndex = this.columns[0].key === 'index'
+      if (isHasIndex) {
+        return
+      }
+      let hasFixedColumn = false
+      for (let i = 0; i < this.columns.length; i++) {
+        if (this.columns[i].fixed) {
+          hasFixedColumn = true
+          break
+        }
+      }
+      if (hasFixedColumn) {
+        this.columns.unshift({title: '', key: 'index', width: 40, align: 'center', fixed: true})
+      } else {
+        this.columns.unshift({title: '', key: 'index', width: 40, align: 'center'})
+      }
+      this.isNeedShowTable = true
+    }
+  }
+}
 </script>
 <style scoped>
   /* ====== 表格 ====== */

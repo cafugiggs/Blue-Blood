@@ -9,20 +9,15 @@
   </div>
 </template>
 <script>
-  import loading from '../spin/Loading.vue'
-  export default {
-    components: {loading},
-    props: {
-      statusText: {
-        default: ''
-      }
-    },
-    data() {
-      return {
-
-      }
+import loading from '../spin/Loading.vue'
+export default {
+  components: {loading},
+  props: {
+    statusText: {
+      default: ''
     }
   }
+}
 </script>
 <style scoped>
   .drop {

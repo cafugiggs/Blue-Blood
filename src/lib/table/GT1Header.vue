@@ -7,44 +7,32 @@
   </ul>
 </template>
 <script>
-  const GT1_HEAD_HEIGHT = 40;
-
-  export default {
-    props: {
-      headColumns: {
-        type: Array,
-        require: true
-      },
-      headStyles: {
-        type: Object
-      },
-      defaultCellWidth: {
-        type: Number
-      }
+const GT1_HEAD_HEIGHT = 40
+export default {
+  props: {
+    headColumns: {
+      type: Array,
+      require: true
     },
-    data() {
-      return {
-
-      }
+    headStyles: {
+      type: Object
     },
-    computed: {
-
+    defaultCellWidth: {
+      type: Number
+    }
+  },
+  methods: {
+    computeCellStyle (column) {
+      let style = {}
+      style.width = column.width ? `${column.width}px` : `${this.defaultCellWidth}px`
+      style.height = `${GT1_HEAD_HEIGHT}px`
+      return style
     },
-    mounted() {
-
-    },
-    methods: {
-      computeCellStyle(column) {
-        let style = {};
-        style.width = column.width ? `${column.width}px` : `${this.defaultCellWidth}px`;
-        style.height = `${GT1_HEAD_HEIGHT}px`;
-        return style;
-      },
-      changeHandle(e) {
-        e ? this.$emit('on-select-all') : this.$emit('on-cancel-all');
-      }
+    changeHandle (e) {
+      e ? this.$emit('on-select-all') : this.$emit('on-cancel-all')
     }
   }
+}
 </script>
 <style scoped>
   ul.header {

@@ -6,57 +6,46 @@
   </ul>
 </template>
 <script>
-  const GT1_HEAD_HEIGHT = 40;
+const GT1_HEAD_HEIGHT = 40
 
-  export default {
-    props: {
-      headColumns: {
-        type: Array,
-        require: true
-      },
-      bodyStyles: {
-        type: Object
-      },
-      bodyData: {
-        type: Array,
-        require: true
-      },
-      defaultCellWidth: {
-        type: Number
+export default {
+  props: {
+    headColumns: {
+      type: Array,
+      require: true
+    },
+    bodyStyles: {
+      type: Object
+    },
+    bodyData: {
+      type: Array,
+      require: true
+    },
+    defaultCellWidth: {
+      type: Number
+    }
+  },
+  methods: {
+    computeCellStyle (column) {
+      let style = {}
+      style.width = column.width ? `${column.width}px` : `${parseFloat(this.defaultCellWidth)}px`
+      style.height = `${GT1_HEAD_HEIGHT}px`
+      return style
+    },
+    computeCellValue (column) {
+      if (column.key === '' || !column.count) {
+        return ''
       }
-    },
-    data() {
-      return {
-
-      }
-    },
-    computed: {
-
-    },
-    mounted() {
-
-    },
-    methods: {
-      computeCellStyle(column) {
-        let style = {};
-        style.width = column.width ? `${column.width}px` : `${parseFloat(this.defaultCellWidth)}px`;
-        style.height = `${GT1_HEAD_HEIGHT}px`;
-        return style;
-      },
-      computeCellValue(column) {
-        if (column.key === '' || !column.count) {
-          return '';
+      let value = 0
+      this.bodyData.forEach(data => {
+        if (((/^(-?\d+)(\.\d+)?$/.test(data[column.key])) || (/^-?\d+$/.test(data[column.key]))) && (data[column.key] !== '')) {
+          value += parseFloat(data[column.key])
         }
-        let value = 0;
-        this.bodyData.forEach(data => {
-          if (((/^(-?\d+)(\.\d+)?$/.test(data[column.key])) || (/^-?\d+$/.test(data[column.key]))) && (data[column.key] !== '')) {
-            value += parseFloat(data[column.key]);
-          }
-        });
-        return value.toFixed(2) != 0 ? value.toFixed(2) : '';
-      }
+      })
+      return value.toFixed(2) !== 0.00 ? value.toFixed(2) : ''
     }
   }
+}
 </script>
 <style scoped>
   ul.content {
