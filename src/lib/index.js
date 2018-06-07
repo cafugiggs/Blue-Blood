@@ -3,13 +3,4 @@
  */
 import vuePowerfulTable from './PowerfulTable.vue'
 
-const PowerfulTable = {
-  install (Vue, options) {
-    Vue.component(vuePowerfulTable.name, vuePowerfulTable)
-  }
-}
-// if (typeof window !== 'undefined' && window.Vue) {
-//   window.PowerfulTable = PowerfulTable
-//   Vue.use(PowerfulTable)
-// }
-export default PowerfulTable
+module.exports = vuePowerfulTable

@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="noFixed" :style="noFixedContent">
-        <div id="noFixedHeadContent" class="noFixedHeadContent" ref="noFixedHeadContent" :style="noFixedHeadContent">
+        <div id="noFixedHeadContent" class="noFixedHeadContent" ref="noFixedHeadContent" :style="noFixedHeadContent" @scroll="handleNoFixedheadScroll">
           <gt1-header
             :headColumns="noFixed.columns"
             :headStyles="noFixedWidthStyles"
@@ -241,21 +241,30 @@ export default {
       })
     },
     handleNoFixedScroll (e) {
-      if (this.isPolling) {
-        return
+      if ((typeof e) === 'number') {
+        this.$nextTick(() => {
+          document.getElementById('noFixedHeadContent').scrollLeft = e
+          document.getElementById('noFixedScrollContent').scrollLeft = e
+          document.getElementById('noFixedCountCellContent').scrollLeft = e
+        })
+      } else {
+        const AFTER_SCROLL_TOP = e.target.scrollTop
+        const AFTER_SCROLL_LEFT = e.target.scrollLeft
+
+        this.$nextTick(() => {
+          document.getElementById('fixedCellContent').scrollTop = AFTER_SCROLL_TOP
+          document.getElementById('noFixedHeadContent').scrollLeft = AFTER_SCROLL_LEFT
+          document.getElementById('noFixedCountCellContent').scrollLeft = AFTER_SCROLL_LEFT
+        })
+
+        if (AFTER_SCROLL_TOP >= (e.target.scrollHeight - e.target.clientHeight)) {
+          this.getPageData()
+        }
       }
-      const AFTER_SCROLL_TOP = e.target.scrollTop
+    },
+    handleNoFixedheadScroll (e) {
       const AFTER_SCROLL_LEFT = e.target.scrollLeft
-
-      this.$nextTick(() => {
-        document.getElementById('fixedCellContent').scrollTop = AFTER_SCROLL_TOP
-        document.getElementById('noFixedHeadContent').scrollLeft = AFTER_SCROLL_LEFT
-        document.getElementById('noFixedCountCellContent').scrollLeft = AFTER_SCROLL_LEFT
-      })
-
-      if (AFTER_SCROLL_TOP >= (e.target.scrollHeight - e.target.clientHeight)) {
-        this.getPageData()
-      }
+      this.handleNoFixedScroll(AFTER_SCROLL_LEFT)
     },
     getPageData () {
       this.$emit('on-getPageData')

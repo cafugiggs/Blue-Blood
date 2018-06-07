@@ -2,7 +2,7 @@
   "name": "vue-powerful-table",
   "version": "1.0.0",
   "description": "develope by HuangYe",
-  "author": "黄烨 <huangye@ciicsh.com>",
+  "author": "黄烨 <cafugiggs@sina.com>",
   "private": false,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
